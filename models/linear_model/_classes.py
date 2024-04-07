@@ -29,7 +29,8 @@ class Ridge(LinearRegression):
 
 class ElasticNet(LinearRegression):
     def __init__(
-        self, alpha: float = 1.,
+        self,
+        alpha: float = 1.0,
         l1_ratio: float = 0.5,
         max_iter: int = 1000,
     ):
