@@ -1,1 +1,1 @@
-from ._classes import LinearRegression, Ridge
+from ._classes import LinearRegression, Ridge, ElasticNet, Lasso
