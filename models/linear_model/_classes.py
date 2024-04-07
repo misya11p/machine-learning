@@ -3,28 +3,25 @@ from .._base import BaseClassifire, BaseRegressor, BaseCluster, BaseTransformer
 
 
 class LinearRegression(BaseRegressor):
-    def _set_params(self, weights):
-        weights = np.array(weights).flatten()
-        self.intercept_ = weights[0]
-        self.coef_ = weights[1:]
+    def __init__(self):
+        self.weights = None
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
-        X = np.matrix(np.insert(X, 0, 1, axis=1))
-        y = np.matrix(y).T
-        weights = (X.T @ X)**(-1) @ X.T @ y
-        self._set_params(weights)
+    def fit(self, X, y):
+        X = np.insert(X, 0, 1, axis=1)
+        self.weights = np.linalg.inv(X.T @ X) @ X.T @ y
 
-    def predict(self, X: np.ndarray):
-        return X @ self.coef_ + self.intercept_
+    def predict(self, X):
+        X = np.insert(X, 0, 1, axis=1)
+        return X @ self.weights
 
 
 class Ridge(LinearRegression):
     def __init__(self, alpha: float = 1.0):
+        super().__init__()
         self.alpha = alpha
 
     def fit(self, X, y):
-        X = np.matrix(np.insert(X, 0, 1, axis=1))
-        y = np.matrix(y).T
+        X = np.insert(X, 0, 1, axis=1)
         I = np.identity(X.shape[1], dtype=np.float32)
-        weights = (X.T @ X + self.alpha*I)**(-1) @ X.T @ y
-        self._set_params(weights)
+        I[0, 0] = 0
+        self.weights = np.linalg.inv(X.T @ X + self.alpha*I) @ X.T @ y
